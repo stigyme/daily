@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0b">
+<title>Daily Flow</title>
+
+<style>
+  * { box-sizing: border-box; }
+
+  :root {
+    --bg: #0b0b0b;
+    --card: #131313;
+    --card-2: #181818;
+    --text: #f4f4f0;
+    --muted: #777;
+    --line: rgba(255,255,255,.09);
+    --accent: #CE2402;
+  }
+
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  body {
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  button, textarea { font: inherit; }
+
+  .app {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 18px 16px 40px;
+  }
+
+  header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .eyebrow {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(30px, 9vw, 48px);
+    line-height: .9;
+    letter-spacing: -.06em;
+    font-weight: 800;
+  }
+
+  .date {
+    color: var(--muted);
+    font-size: 11px;
+    text-align: right;
+    line-height: 1.45;
+    max-width: 110px;
+  }
+
+  /* CAROUSEL */
+  .carousel {
+    overflow: hidden;
+    width: 100%;
+    border-radius: 20px;
+    touch-action: pan-y;
+  }
+
+  .track {
+    display: flex;
+    width: 300%;
+    transform: translateX(0);
+    transition: transform .42s cubic-bezier(.22,.8,.25,1);
+  }
+
+  .slide {
+    width: 33.333333%;
+    flex: 0 0 33.333333%;
+  }
+
+  .card {
+    min-height: min(650px, calc(100dvh - 180px));
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-top {
+    padding: 18px 18px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .step {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .16em;
+    font-weight: 700;
+  }
+
+  .step-number {
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .video-wrap {
+    position: relative;
+    flex: 1;
+    min-height: 470px;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .video-wrap blockquote {
+    margin: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .instagram-media {
+    margin: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .fallback {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    padding: 30px;
+    text-align: center;
+    background: #0d0d0d;
+  }
+
+  .fallback strong {
+    font-size: 16px;
+  }
+
+  .fallback span {
+    color: var(--muted);
+    font-size: 12px;
+    max-width: 250px;
+    line-height: 1.5;
+  }
+
+  .ig-button {
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid var(--line);
+    padding: 12px 15px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  .card-bottom {
+    padding: 14px 18px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--line);
+  }
+
+  .hint {
+    color: var(--muted);
+    font-size: 10px;
+  }
+
+  .arrow {
+    color: var(--text);
+    font-size: 22px;
+  }
+
+  .exercise-list {
+    flex: 1;
+    padding: 10px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+
+  .exercise-button {
+    min-height: 82px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #0d0d0d;
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    transition: transform .15s, border-color .15s;
+  }
+
+  .exercise-button:active,
+  .saved-link:active {
+    transform: scale(.985);
+  }
+
+  .exercise-button small {
+    display: block;
+    color: var(--muted);
+    font-size: 9px;
+    letter-spacing: .14em;
+    margin-bottom: 7px;
+    font-weight: 700;
+  }
+
+  .exercise-button span {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .exercise-button b {
+    font-size: 20px;
+    font-weight: 400;
+  }
+
+  /* SAVED LINKS */
+  .link-form {
+    padding: 0 18px;
+  }
+
+  .link-form input {
+    display: block;
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #0d0d0d;
+    color: var(--text);
+    outline: none;
+    padding: 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+
+  .link-form input:focus {
+    border-color: rgba(255,255,255,.22);
+  }
+
+  .link-form input::placeholder {
+    color: #4f4f4f;
+  }
+
+  .add-link {
+    width: 100%;
+    border: 0;
+    border-radius: 12px;
+    padding: 14px;
+    background: var(--text);
+    color: #0b0b0b;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .12em;
+    cursor: pointer;
+  }
+
+  .saved-links {
+    flex: 1;
+    overflow: auto;
+    padding: 10px 18px 0;
+    min-height: 180px;
+  }
+
+  .saved-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid var(--line);
+    background: #0d0d0d;
+    border-radius: 12px;
+    padding: 13px;
+    margin-bottom: 8px;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .saved-link-info {
+    min-width: 0;
+  }
+
+  .saved-link-title {
+    font-size: 13px;
+    font-weight: 700;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .saved-link-url {
+    color: var(--muted);
+    font-size: 9px;
+    margin-top: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .saved-link-arrow {
+    font-size: 17px;
+    flex: 0 0 auto;
+  }
+
+  .delete-link {
+    background: none;
+    border: 0;
+    color: #555;
+    padding: 5px;
+    cursor: pointer;
+    font-size: 15px;
+  }
+
+  .empty-links {
+    color: #414141;
+    font-size: 11px;
+    padding: 15px 0;
+  }
+
+  .links-card {
+    min-height: min(650px, calc(100dvh - 180px));
+  }
+
+  .links-intro {
+    padding: 8px 18px 17px;
+  }
+
+  .links-intro h2 {
+    margin: 0 0 8px;
+    font-size: clamp(28px, 8vw, 44px);
+    line-height: .95;
+    letter-spacing: -.05em;
+  }
+
+  .links-intro p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  /* NOTES */
+  .notes-card {
+    padding-bottom: 18px;
+  }
+
+  .notes-intro {
+    padding: 8px 18px 20px;
+  }
+
+  .notes-intro h2 {
+    margin: 0 0 8px;
+    font-size: clamp(28px, 8vw, 44px);
+    line-height: .95;
+    letter-spacing: -.05em;
+  }
+
+  .notes-intro p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  textarea {
+    display: block;
+    width: calc(100% - 36px);
+    margin: 0 18px;
+    flex: 1;
+    min-height: 340px;
+    resize: none;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    outline: none;
+    padding: 17px;
+    background: #0d0d0d;
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  textarea:focus {
+    border-color: rgba(255,255,255,.22);
+  }
+
+  textarea::placeholder {
+    color: #4f4f4f;
+  }
+
+  .notes-actions {
+    padding: 14px 18px 0;
+  }
+
+  .finish {
+    width: 100%;
+    border: 0;
+    border-radius: 12px;
+    padding: 16px;
+    background: var(--text);
+    color: #0b0b0b;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .13em;
+    cursor: pointer;
+    transition: transform .15s, background .15s;
+  }
+
+  .finish:active {
+    transform: scale(.98);
+  }
+
+  .save-status {
+    height: 18px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 10px;
+    padding-top: 7px;
+  }
+
+  /* NAV */
+  .navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin: 15px 0 30px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: 0;
+    background: #333;
+    padding: 0;
+    cursor: pointer;
+    transition: all .25s;
+  }
+
+  .dot.active {
+    width: 25px;
+    border-radius: 20px;
+    background: var(--text);
+  }
+
+  .swipe-label {
+    position: absolute;
+    right: 16px;
+    bottom: 18px;
+    z-index: 3;
+    pointer-events: none;
+    color: rgba(255,255,255,.5);
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  /* HISTORY */
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 11px;
+  }
+
+  .history-title {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .16em;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .clear-history {
+    background: none;
+    border: 0;
+    color: #4d4d4d;
+    font-size: 10px;
+    cursor: pointer;
+  }
+
+  .history {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .history-empty {
+    padding: 18px 0;
+    color: #414141;
+    font-size: 12px;
+  }
+
+  .history-item {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--text);
+    border-radius: 13px;
+    padding: 13px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .history-date {
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .history-preview {
+    color: var(--muted);
+    font-size: 10px;
+    margin-top: 4px;
+    max-width: 80vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .history-arrow {
+    color: #555;
+    font-size: 18px;
+    margin-left: 10px;
+  }
+
+  /* MODAL */
+  .modal {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: rgba(0,0,0,.75);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .modal.open { display: flex; }
+
+  .modal-box {
+    width: 100%;
+    max-width: 700px;
+    max-height: 80dvh;
+    overflow: auto;
+    background: #151515;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 20px;
+  }
+
+  .modal-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+
+  .modal-date {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -.03em;
+  }
+
+  .close {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: #0d0d0d;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .modal-note {
+    white-space: pre-wrap;
+    color: #d0d0d0;
+    line-height: 1.7;
+    font-size: 14px;
+    min-height: 100px;
+  }
+
+  @media (min-width: 700px) {
+    .app { padding-top: 30px; }
+    .card { min-height: 680px; }
+    .video-wrap { min-height: 500px; }
+  }
+</style>
+</head>
+
+<body>
+
+<main class="app">
+
+  <header>
+    <div>
+      <div class="eyebrow">Daily Flow</div>
+      <h1>MY DAY.</h1>
+    </div>
+    <div class="date" id="today"></div>
+  </header>
+
+  <section class="carousel" id="carousel">
+    <div class="track" id="track">
+
+      <!-- ETAPA 01 -->
+      <article class="slide">
+        <div class="card">
+          <div class="card-top">
+            <div class="step">START HERE</div>
+            <div class="step-number">01 / 02</div>
+          </div>
+
+          <div class="exercise-list">
+            <a class="exercise-button"
+               href="https://www.instagram.com/reel/Ddrs9XlybBb/?utm_source=ig_web_button_share_sheet&stkn=MzRlODBiNWFlZA=="
+               target="_blank"
+               rel="noopener">
+              <span>
+                <small>EXERCÍCIO 01</small>
+                Alongamento completo
+              </span>
+              <b>↗</b>
+            </a>
+
+            <!-- Adicione novos exercícios copiando o bloco acima -->
+          </div>
+
+          <div class="card-bottom">
+            <span class="hint">Abra o exercício e faça</span>
+            <span class="arrow">→</span>
+          </div>
+
+          <div class="swipe-label">swipe →</div>
+        </div>
+      </article>
+
+      <!-- ETAPA 02 -->
+      <article class="slide">
+        <div class="card notes-card">
+
+          <div class="card-top">
+            <div class="step">PLAN THE DAY</div>
+            <div class="step-number">02 / 02</div>
+          </div>
+
+          <div class="notes-intro">
+            <h2>WHAT'S<br>THE PLAN?</h2>
+            <p>Escreva o que você precisa fazer hoje.</p>
+          </div>
+
+          <textarea
+            id="dailyNote"
+            placeholder="01 —&#10;02 —&#10;03 —&#10;&#10;Ideias, prioridades, coisas que não posso esquecer..."
+            spellcheck="true"></textarea>
+
+          <div class="notes-actions">
+            <button class="finish" id="finishDay">
+              FINALIZAR DIA
+            </button>
+            <div class="save-status" id="saveStatus">salvo automaticamente</div>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- ETAPA 03 -->
+      <article class="slide">
+        <div class="card links-card">
+
+          <div class="card-top">
+            <div class="step">SAVE FOR LATER</div>
+            <div class="step-number">03 / 03</div>
+          </div>
+
+          <div class="links-intro">
+            <h2>KEEP<br>THIS.</h2>
+            <p>Salve coisas que encontrar durante o dia.</p>
+          </div>
+
+          <form class="link-form" id="linkForm">
+            <input id="linkTitle" type="text" placeholder="Descrição breve" maxlength="80" required>
+            <input id="linkUrl" type="url" placeholder="https://..." required>
+            <button class="add-link" type="submit">+ SALVAR LINK</button>
+          </form>
+
+          <div class="saved-links" id="savedLinks"></div>
+
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <nav class="navigation" aria-label="Etapas">
+    <button class="dot active" data-slide="0" aria-label="Etapa 1"></button>
+    <button class="dot" data-slide="1" aria-label="Etapa 2"></button>
+    <button class="dot" data-slide="2" aria-label="Etapa 3"></button>
+  </nav>
+
+  <section>
+    <div class="history-header">
+      <div class="history-title">Dias finalizados</div>
+      <button class="clear-history" id="clearHistory">limpar histórico</button>
+    </div>
+
+    <div class="history" id="history"></div>
+  </section>
+
+</main>
+
+<!-- MODAL DO HISTÓRICO -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-top">
+      <div class="modal-date" id="modalDate"></div>
+      <button class="close" id="closeModal">×</button>
+    </div>
+    <div class="modal-note" id="modalNote"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const STORAGE_KEY = "dailyFlowHistory_v1";
+  const DRAFT_KEY = "dailyFlowDraft_v1";
+
+  const track = document.getElementById("track");
+  const carousel = document.getElementById("carousel");
+  const dots = [...document.querySelectorAll(".dot")];
+  const note = document.getElementById("dailyNote");
+  const historyEl = document.getElementById("history");
+  const saveStatus = document.getElementById("saveStatus");
+  const finishBtn = document.getElementById("finishDay");
+  const todayEl = document.getElementById("today");
+
+  const modal = document.getElementById("modal");
+  const modalDate = document.getElementById("modalDate");
+  const modalNote = document.getElementById("modalNote");
+  const closeModal = document.getElementById("closeModal");
+
+  let currentSlide = 0;
+  let startX = 0;
+  let startY = 0;
+  let dragging = false;
+  let saveTimer;
+
+  const now = new Date();
+
+  function dateKey(date = new Date()) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function formatDate(dateString) {
+    const [y, m, d] = dateString.split("-");
+    const date = new Date(Number(y), Number(m) - 1, Number(d));
+
+    return date.toLocaleDateString("pt-BR", {
+      weekday: "long",
+      day: "2-digit",
+      month: "long",
+      year: "numeric"
+    });
+  }
+
+  function shortDate(dateString) {
+    const [y, m, d] = dateString.split("-");
+    return `${d}/${m}/${y}`;
+  }
+
+  todayEl.textContent = formatDate(dateKey(now));
+
+  function getHistory() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveHistory(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function getDraft() {
+    return localStorage.getItem(DRAFT_KEY) || "";
+  }
+
+  function saveDraft() {
+    localStorage.setItem(DRAFT_KEY, note.value);
+    saveStatus.textContent = "salvo agora";
+
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      saveStatus.textContent = "salvo automaticamente";
+    }, 1200);
+  }
+
+  note.value = getDraft();
+
+  note.addEventListener("input", saveDraft);
+
+  function goToSlide(index) {
+    currentSlide = Math.max(0, Math.min(2, index));
+    track.style.transform = `translateX(-${currentSlide * 33.333333}%)`;
+
+    dots.forEach((dot, i) => {
+      dot.classList.toggle("active", i === currentSlide);
+    });
+  }
+
+  dots.forEach(dot => {
+    dot.addEventListener("click", () => {
+      goToSlide(Number(dot.dataset.slide));
+    });
+  });
+
+  /* Swipe no celular */
+  carousel.addEventListener("touchstart", e => {
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+    dragging = true;
+  }, { passive: true });
+
+  carousel.addEventListener("touchend", e => {
+    if (!dragging) return;
+
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - startX;
+    const dy = touch.clientY - startY;
+
+    dragging = false;
+
+    // Ignora gestos mais verticais
+    if (Math.abs(dy) > Math.abs(dx)) return;
+
+    if (Math.abs(dx) > 50) {
+      if (dx < 0) goToSlide(currentSlide + 1);
+      else goToSlide(currentSlide - 1);
+    }
+  }, { passive: true });
+
+  const LINKS_KEY = "dailyFlowSavedLinks_v1";
+  const linkForm = document.getElementById("linkForm");
+  const linkTitle = document.getElementById("linkTitle");
+  const linkUrl = document.getElementById("linkUrl");
+  const savedLinksEl = document.getElementById("savedLinks");
+
+  function getLinks() {
+    try {
+      return JSON.parse(localStorage.getItem(LINKS_KEY)) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveLinks(data) {
+    localStorage.setItem(LINKS_KEY, JSON.stringify(data));
+  }
+
+  function renderLinks() {
+    const links = getLinks();
+    savedLinksEl.innerHTML = "";
+
+    if (!links.length) {
+      savedLinksEl.innerHTML =
+        '<div class="empty-links">Se encontrar algo interessante, salve aqui.</div>';
+      return;
+    }
+
+    links.forEach((item, index) => {
+      const row = document.createElement("div");
+      row.className = "saved-link";
+
+      const info = document.createElement("a");
+      info.href = item.url;
+      info.target = "_blank";
+      info.rel = "noopener";
+      info.className = "saved-link-info";
+      info.style.textDecoration = "none";
+      info.style.color = "inherit";
+
+      const title = document.createElement("div");
+      title.className = "saved-link-title";
+      title.textContent = item.title;
+
+      const url = document.createElement("div");
+      url.className = "saved-link-url";
+      url.textContent = item.url;
+
+      info.appendChild(title);
+      info.appendChild(url);
+
+      const deleteButton = document.createElement("button");
+      deleteButton.className = "delete-link";
+      deleteButton.type = "button";
+      deleteButton.textContent = "×";
+      deleteButton.title = "Excluir";
+      deleteButton.addEventListener("click", () => {
+        const updated = getLinks();
+        updated.splice(index, 1);
+        saveLinks(updated);
+        renderLinks();
+      });
+
+      row.appendChild(info);
+      row.appendChild(deleteButton);
+      savedLinksEl.appendChild(row);
+    });
+  }
+
+  linkForm.addEventListener("submit", e => {
+    e.preventDefault();
+
+    let url = linkUrl.value.trim();
+    const title = linkTitle.value.trim();
+
+    if (!/^https?:\/\//i.test(url)) {
+      url = "https://" + url;
+    }
+
+    const links = getLinks();
+    links.unshift({
+      title,
+      url,
+      createdAt: new Date().toISOString()
+    });
+
+    saveLinks(links);
+    linkForm.reset();
+    renderLinks();
+  });
+
+  function renderHistory() {
+    const data = getHistory();
+
+    historyEl.innerHTML = "";
+
+    if (!data.length) {
+      historyEl.innerHTML =
+        '<div class="history-empty">Nenhum dia finalizado ainda.</div>';
+      return;
+    }
+
+    data.sort((a, b) => b.date.localeCompare(a.date));
+
+    data.forEach(item => {
+      const button = document.createElement("button");
+      button.className = "history-item";
+
+      const left = document.createElement("div");
+
+      const date = document.createElement("div");
+      date.className = "history-date";
+      date.textContent = shortDate(item.date);
+
+      const preview = document.createElement("div");
+      preview.className = "history-preview";
+      preview.textContent =
+        item.note.replace(/\s+/g, " ").trim() || "Dia finalizado sem anotação.";
+
+      left.appendChild(date);
+      left.appendChild(preview);
+
+      const arrow = document.createElement("div");
+      arrow.className = "history-arrow";
+      arrow.textContent = "→";
+
+      button.appendChild(left);
+      button.appendChild(arrow);
+
+      button.addEventListener("click", () => openHistory(item));
+
+      historyEl.appendChild(button);
+    });
+  }
+
+  function openHistory(item) {
+    modalDate.textContent = formatDate(item.date);
+    modalNote.textContent =
+      item.note.trim() || "Nenhuma anotação foi registrada neste dia.";
+
+    modal.classList.add("open");
+  }
+
+  closeModal.addEventListener("click", () => {
+    modal.classList.remove("open");
+  });
+
+  modal.addEventListener("click", e => {
+    if (e.target === modal) modal.classList.remove("open");
+  });
+
+  finishBtn.addEventListener("click", () => {
+    const value = note.value.trim();
+
+    if (!value) {
+      note.focus();
+      saveStatus.textContent = "escreva algo antes de finalizar";
+      setTimeout(() => {
+        saveStatus.textContent = "salvo automaticamente";
+      }, 1800);
+      return;
+    }
+
+    const key = dateKey();
+    const history = getHistory();
+
+    const existingIndex = history.findIndex(item => item.date === key);
+
+    const entry = {
+      date: key,
+      note: value,
+      finishedAt: new Date().toISOString()
+    };
+
+    if (existingIndex >= 0) {
+      history[existingIndex] = entry;
+    } else {
+      history.push(entry);
+    }
+
+    saveHistory(history);
+
+    // Limpa o rascunho
+    localStorage.removeItem(DRAFT_KEY);
+    note.value = "";
+
+    renderHistory();
+
+    // Volta para o começo
+    goToSlide(0);
+
+    // Pequeno feedback
+    saveStatus.textContent = "dia finalizado ✓";
+    setTimeout(() => {
+      saveStatus.textContent = "salvo automaticamente";
+    }, 1800);
+  });
+
+  document.getElementById("clearHistory").addEventListener("click", () => {
+    const data = getHistory();
+
+    if (!data.length) return;
+
+    const confirmed = confirm(
+      "Apagar todo o histórico? Essa ação não pode ser desfeita."
+    );
+
+    if (confirmed) {
+      localStorage.removeItem(STORAGE_KEY);
+      renderHistory();
+    }
+  });
+
+
+  renderHistory();
+  renderLinks();
+})();
+</script>
+
+</body>
+</html>
